@@ -1,0 +1,20 @@
+FROM fedora:39
+
+# Install packages
+RUN dnf -y update && dnf -y install \
+    bash \
+    curl \
+    git \
+    iproute \
+    jq \
+    make \
+    procps-ng \
+    python3 \
+    the_silver_searcher \
+    unzip \
+    which \
+    zip \
+    && dnf clean all
+
+# Set working directory
+WORKDIR /app

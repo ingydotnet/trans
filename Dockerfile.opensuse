@@ -1,0 +1,21 @@
+FROM opensuse/leap:15.5
+
+# Install packages
+RUN zypper --non-interactive refresh && \
+    zypper --non-interactive install \
+    bash \
+    coreutils \
+    curl \
+    git \
+    iproute2 \
+    jq \
+    make \
+    procps \
+    python3 \
+    the_silver_searcher \
+    unzip \
+    zip \
+    && zypper clean --all
+
+# Set working directory
+WORKDIR /app

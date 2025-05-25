@@ -1,0 +1,20 @@
+ag:
+  alpine: the_silver_searcher
+  fedora: the_silver_searcher
+  opensuse: the_silver_searcher
+  ubuntu: silversearcher-ag
+
+net-tools:
+  alpine: iproute2
+  fedora: iproute
+  opensuse: iproute2
+
+process-tools:
+  alpine: procps
+  fedora: procps-ng
+  opensuse: procps
+  ubuntu: procps
+
+which:
+  ubuntu: debianutils
+  opensuse: coreutils

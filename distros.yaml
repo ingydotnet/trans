@@ -1,0 +1,4 @@
+alpine: alpine:3.19
+fedora: fedora:39
+opensuse: opensuse/leap:15.5
+ubuntu: ubuntu:22.04

@@ -1,0 +1,16 @@
+- ag
+- bash
+- curl
+- git
+- jq
+- make
+- net-tools
+- process-tools
+- python3
+- unzip
+- which
+- zip
+
+--- !YS-v0
+use make-dockerfile: :as md
+say: md/make(ARGS:first _)

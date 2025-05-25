@@ -1,10 +1,30 @@
-SHELL := bash
+include .makes/init.mk
+include $(MAKES)/ys.mk
 
-DISTROS := $(wildcard Dockerfile.*)
-DISTROS := $(DISTROS:Dockerfile.%=%)
+ifeq (,$(wildcard $(YS)))
+_ := $(shell set -x && $(install-ys))
+endif
 
+DISTROS = $(shell ys -e 'use: make-dockerfile' -e 'say: make-dockerfile/distros:keys:joins')
 IMAGES := $(foreach distro,$(DISTROS),image-$(distro))
 TESTS := $(foreach distro,$(DISTROS),test-$(distro))
+
+build: $(IMAGES)
+
+test: $(TESTS)
+
+clean::
+	$(RM) Dockerfile
+
+$(IMAGES):
+	pwd
+	ys Dockerfile.ys $(subst image-,,$(@)) > Dockerfile
+	docker build -t $@ .
+	$(RM) Dockerfile
+
+test-%: image-%
+	@echo "Testing $(subst test-,,$(@)) image..."
+	$(call TEST_CMD,image-$(subst test-,,$(@)))
 
 # Test command that uses all installed packages
 define TEST_CMD
@@ -22,16 +42,3 @@ docker run -it --rm $1 \
     true'
 endef
 export TEST_CMD
-
-default:
-
-build: $(IMAGES)
-
-test: $(TESTS)
-
-$(IMAGES):
-	docker build -t $@ -f Dockerfile.$(subst image-,,$(@)) .
-
-test-%: image-%
-	@echo "Testing $(subst test-,,$(@)) image..."
-	$(call TEST_CMD,image-$(subst test-,,$(@)))

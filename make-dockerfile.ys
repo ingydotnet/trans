@@ -1,0 +1,39 @@
+!YS-v0
+
+ns: make-dockerfile
+
+distros =: load('distros.yaml')
+package-map =: load('package-map.yaml')
+
+defn make(distro packages):
+  from =: distros.$distro ||
+    die("Invalid distro name '$distro'")
+  packages =: convert-packages(distro packages)
+  run =: call("make-dockerfile/run-$distro" packages)
+  =>: |
+    FROM $from
+    RUN $run
+    WORKDIR /app
+
+defn convert-packages(distro packages):
+  map _ packages:
+    fn(package):
+      package-map.$package.$distro || package
+
+defn run-alpine(packages): |
+  apk add --no-cache $(packages:joins) \
+  && echo "alias netstat='ss'" >> /etc/profile.d/aliases.sh
+
+defn run-fedora(packages): |
+  dnf install -y $(packages:joins) \
+  && dnf clean all
+
+defn run-opensuse(packages): |
+  zypper --non-interactive refresh \
+  && zypper --non-interactive install $(packages:joins) \
+  && zypper clean -a
+
+defn run-ubuntu(packages): |
+  apt-get update \
+  && apt-get install -y $(packages:joins) \
+  && rm -rf /var/lib/apt/lists/*
